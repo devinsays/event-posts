@@ -1,6 +1,6 @@
 <?
 /*
-Plugin Name: Sample Event Post Type
+Plugin Name:Event Posts
 Plugin URI: http://www.wptheming.com
 Description: Creates a custom post type for events with associated metaboxes.
 Version: 0.1
@@ -60,16 +60,16 @@ add_action( 'init', 'ep_eventposts' );
 /**
  * Adds event post metaboxes for start time and end time
  * http://codex.wordpress.org/Function_Reference/add_meta_box
+ *
+ * We want two time event metaboxes, one for the start time and one for the end time.
+ * Two avoid repeating code, we'll just pass the $identifier in a callback.
+ * If you wanted to add this to regular posts instead, just swap 'event' for 'post' in add_meta_box.
  */
 
 function ep_eventposts_metaboxes() {
-	// We want two time event metaboxes, one for the start time and one for the end time
-	// Two avoid repeating code, we'll just pass the $identifier in a callback
-	$start = array( 'id' => '_start');
-	$end = array('id'=>'_end');
-	// If you wanted to add this to regular posts instead, just swap 'event' for 'post' below
-	add_meta_box( 'ept_event_date_start', 'Start Date and Time', 'ept_event_date', 'event', 'side', 'default', $start );
-	add_meta_box( 'ept_event_date_end', 'End Date and Time', 'ept_event_date', 'event', 'side', 'default', $end );
+	add_meta_box( 'ept_event_date_start', 'Start Date and Time', 'ept_event_date', 'event', 'side', 'default', array( 'id' => '_start') );
+	add_meta_box( 'ept_event_date_end', 'End Date and Time', 'ept_event_date', 'event', 'side', 'default', array('id'=>'_end') );
+	add_meta_box( 'ept_event_location', 'Event Location', 'ept_event_location', 'event', 'normal', 'default', array('id'=>'_end') );
 }
 add_action( 'admin_init', 'ep_eventposts_metaboxes' );
 
@@ -128,6 +128,16 @@ function ept_event_date($post, $args) {
     echo '<input type="text" name="' . $metabox_id . '_hour" value="' . $hour . '" size="2" maxlength="2"/>:';
     echo '<input type="text" name="' . $metabox_id . '_minute" value="' . $min . '" size="2" maxlength="2" />';
  
+}
+
+function ept_event_location() {
+	global $post;
+	// Use nonce for verification
+	wp_nonce_field( plugin_basename( __FILE__ ), 'ep_eventposts_nonce' );
+	// The metabox HTML
+	$event_location = get_post_meta( $post->ID, '_event_location', true );
+	echo '<label for="_event_location">Location:</label>';
+	echo '<input type="text" name="_event_location" value="' . $event_location  . '" />';
 }
 
 // Save the Metabox Data
@@ -212,4 +222,13 @@ function eventposttype_get_the_event_date() {
     $eventdate .= ':' . get_post_meta($post->ID, '_minute', true);
     echo $eventdate;
 }
+
+// Add custom CSS to style the metabox
+add_action('admin_print_styles-post.php', 'ep_eventposts_css');
+add_action('admin_print_styles-post-new.php', 'ep_eventposts_css');
+
+function ep_eventposts_css() {
+	wp_enqueue_style('your-meta-box', plugin_dir_url( __FILE__ ) . '/event-post-metabox.css');
+}
+
 ?>
