@@ -124,7 +124,7 @@ function ept_event_date($post, $args) {
 
 	echo $month_s;
 	echo '<input type="text" name="' . $metabox_id . '_day" value="' . $day  . '" size="2" maxlength="2" />';
-    echo '<input type="text" name="' . $metabox_id . '_year" value="' . $year . '" size="2" maxlength="2" /> @ ';
+    echo '<input type="text" name="' . $metabox_id . '_year" value="' . $year . '" size="4" maxlength="4" /> @ ';
     echo '<input type="text" name="' . $metabox_id . '_hour" value="' . $hour . '" size="2" maxlength="2"/>:';
     echo '<input type="text" name="' . $metabox_id . '_minute" value="' . $min . '" size="2" maxlength="2" />';
  
@@ -230,5 +230,40 @@ add_action('admin_print_styles-post-new.php', 'ep_eventposts_css');
 function ep_eventposts_css() {
 	wp_enqueue_style('your-meta-box', plugin_dir_url( __FILE__ ) . '/event-post-metabox.css');
 }
+
+/**
+ * Customize Event Query using Post Meta
+ * 
+ * @link http://www.billerickson.net/customize-the-wordpress-query/
+ * @param object $query data
+ *
+ */
+function ep_event_query( $query ) {
+
+	// http://codex.wordpress.org/Function_Reference/current_time
+	$current_time = current_time('mysql'); 
+	list( $today_year, $today_month, $today_day, $hour, $minute, $second ) = split( '([^0-9])', $current_time );
+	$current_timestamp = $today_year . $today_month . $today_day . $hour . $minute;
+
+	global $wp_the_query;
+	
+	if ( $wp_the_query === $query && !is_admin() && is_post_type_archive( 'event' ) ) {
+		$meta_query = array(
+			array(
+				'key' => '_start_eventtimestamp',
+				'value' => $current_timestamp,
+				'compare' => '>'
+			)
+		);
+		$query->set( 'meta_query', $meta_query );
+		$query->set( 'orderby', 'meta_value_num' );
+		$query->set( 'meta_key', '_start_eventtimestamp' );
+		$query->set( 'order', 'ASC' );
+		$query->set( 'posts_per_page', '2' );
+	}
+
+}
+
+add_action( 'pre_get_posts', 'ep_event_query' );
 
 ?>
