@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 Plugin Name:Event Posts
 Plugin URI: http://www.wptheming.com
