@@ -163,21 +163,30 @@ function ep_eventposts_save_meta( $post_id, $post ) {
 	$metabox_ids = array( '_start', '_end' );
 
 	foreach ($metabox_ids as $key ) {
-		$events_meta[$key . '_month'] = $_POST[$key . '_month'];
-		if($_POST[$key . '_day']<10){
-			$events_meta[$key . '_day'] = '0'.$_POST[$key . '_day'];
-		} else {
-			$events_meta[$key . '_day'] = $_POST[$key . '_day'];
-		}
-		if($_POST[$key . '_hour']<10){
-			$events_meta[$key . '_hour'] = '0'.$_POST[$key . '_hour'];
-		} else {
-			$events_meta[$key . '_hour'] = $_POST[$key . '_hour'];
-		}
-	    $events_meta[$key . '_year'] = $_POST[$key . '_year'];
-	    $events_meta[$key . '_hour'] = $_POST[$key . '_hour'];
-	    $events_meta[$key . '_minute'] = $_POST[$key . '_minute'];
-	    $events_meta[$key . '_eventtimestamp'] = $events_meta[$key . '_year'] . $events_meta[$key . '_month'] . $events_meta[$key . '_day'] . $events_meta[$key . '_hour'] . $events_meta[$key . '_minute'];
+	    
+	    $aa = $_POST[$key . '_year'];
+		$mm = $_POST[$key . '_month'];
+		$jj = $_POST[$key . '_day'];
+		$hh = $_POST[$key . '_hour'];
+		$mn = $_POST[$key . '_minute'];
+		
+		$aa = ($aa <= 0 ) ? date('Y') : $aa;
+		$mm = ($mm <= 0 ) ? date('n') : $mm;
+		$jj = sprintf('%02d',$jj);
+		$jj = ($jj > 31 ) ? 31 : $jj;
+		$jj = ($jj <= 0 ) ? date('j') : $jj;
+		$hh = sprintf('%02d',$hh);
+		$hh = ($hh > 23 ) ? 23 : $hh;
+		$mn = sprintf('%02d',$mn);
+		$mn = ($mn > 59 ) ? 59 : $mn;
+		
+		$events_meta[$key . '_year'] = $aa;
+		$events_meta[$key . '_month'] = $mm;
+		$events_meta[$key . '_day'] = $jj;
+		$events_meta[$key . '_hour'] = $hh;
+		$events_meta[$key . '_minute'] = $mn;
+	    $events_meta[$key . '_eventtimestamp'] = $aa . $mm . $jj . $hh . $mn;
+	    
     }
  
 
