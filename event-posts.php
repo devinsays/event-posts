@@ -164,12 +164,16 @@ function ep_eventposts_save_meta( $post_id, $post ) {
 
 	foreach ($metabox_ids as $key ) {
 		$events_meta[$key . '_month'] = $_POST[$key . '_month'];
-	    $events_meta[$key . '_day'] = $_POST[$key . '_day'];
-	        if($_POST[$key . '_hour']<10){
-	             $events_meta[$key . '_hour'] = '0'.$_POST[$key . '_hour'];
-	         } else {
-	               $events_meta[$key . '_hour'] = $_POST[$key . '_hour'];
-	         }
+		if($_POST[$key . '_day']<10){
+			$events_meta[$key . '_day'] = '0'.$_POST[$key . '_day'];
+		} else {
+			$events_meta[$key . '_day'] = $_POST[$key . '_day'];
+		}
+		if($_POST[$key . '_hour']<10){
+			$events_meta[$key . '_hour'] = '0'.$_POST[$key . '_hour'];
+		} else {
+			$events_meta[$key . '_hour'] = $_POST[$key . '_hour'];
+		}
 	    $events_meta[$key . '_year'] = $_POST[$key . '_year'];
 	    $events_meta[$key . '_hour'] = $_POST[$key . '_hour'];
 	    $events_meta[$key . '_minute'] = $_POST[$key . '_minute'];
