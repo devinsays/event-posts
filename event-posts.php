@@ -188,6 +188,10 @@ function ep_eventposts_save_meta( $post_id, $post ) {
 	    $events_meta[$key . '_eventtimestamp'] = $aa . $mm . $jj . $hh . $mn;
 	    
     }
+    
+    	// Save Locations Meta
+    	
+    	 $events_meta['_event_location'] = $_POST['_event_location'];	
  
 
 	// Add values of $events_meta as custom fields
